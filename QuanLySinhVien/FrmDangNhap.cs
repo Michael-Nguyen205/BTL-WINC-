@@ -30,27 +30,28 @@ namespace QuanLySinhVien
 
             try
             {
-                SqlConnection conn = new SqlConnection(LayConnectionString());
-                conn.Open();
-
-                string sql = "SELECT COUNT(*) FROM Account WHERE Username=@user AND Password=@pass";
-                SqlCommand cmd = new SqlCommand(sql, conn);
-                cmd.Parameters.AddWithValue("@user", tenDangNhap);
-                cmd.Parameters.AddWithValue("@pass", matKhau);
-
-                int soLuong = (int)cmd.ExecuteScalar();
-                conn.Close();
-
-                if (soLuong > 0)
+                using (SqlConnection conn = new SqlConnection(LayConnectionString()))
                 {
-                    this.DialogResult = DialogResult.OK;
-                    this.Close();
-                }
-                else
-                {
-                    MessageBox.Show("Tài khoản hoặc mật khẩu không đúng!", "Lỗi đăng nhập", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    txtMatKhau.Text = "";
-                    txtTaiKhoan.Focus();
+                    conn.Open();
+
+                    string sql = "SELECT COUNT(*) FROM Account WHERE Username=@user AND Password=@pass";
+                    SqlCommand cmd = new SqlCommand(sql, conn);
+                    cmd.Parameters.AddWithValue("@user", tenDangNhap);
+                    cmd.Parameters.AddWithValue("@pass", matKhau);
+
+                    int soLuong = (int)cmd.ExecuteScalar();
+
+                    if (soLuong > 0)
+                    {
+                        this.DialogResult = DialogResult.OK;
+                        this.Close();
+                    }
+                    else
+                    {
+                        MessageBox.Show("Tài khoản hoặc mật khẩu không đúng!", "Lỗi đăng nhập", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        txtMatKhau.Text = "";
+                        txtTaiKhoan.Focus();
+                    }
                 }
             }
             catch (Exception ex)
